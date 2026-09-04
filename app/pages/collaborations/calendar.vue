@@ -250,8 +250,8 @@ watch(
             </div>
 
             <div v-else class="grid min-h-0 flex-1 gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
-                <section class="rounded-3xl border border-gray-200 bg-white p-4 shadow-sm">
-                    <div class="mb-4 grid grid-cols-7 gap-2 text-center text-xs font-medium uppercase tracking-wide text-gray-500">
+                <section class="rounded-3xl border border-gray-200 bg-white p-3 shadow-sm sm:p-4">
+                    <div class="mb-3 grid grid-cols-7 gap-1.5 text-center text-[10px] font-medium uppercase tracking-wide text-gray-500 sm:mb-4 sm:gap-2 sm:text-xs">
                         <span>Lun</span>
                         <span>Mar</span>
                         <span>Mer</span>
@@ -261,12 +261,12 @@ watch(
                         <span>Dim</span>
                     </div>
 
-                    <div class="grid grid-cols-7 gap-2">
+                    <div class="grid grid-cols-7 gap-1.5 sm:gap-2">
                         <button
                             v-for="day in visibleMonthDays"
                             :key="day.key"
                             type="button"
-                            class="group flex min-h-36 flex-col rounded-2xl border p-2 text-left transition"
+                            class="group flex min-h-24 flex-col rounded-2xl border p-1.5 text-left transition sm:min-h-32 sm:p-2 lg:min-h-36"
                             :class="[
                                 day.isCurrentMonth ? 'bg-white' : 'bg-gray-50 text-gray-400',
                                 day.isToday ? 'border-blue-400 ring-2 ring-blue-100' : 'border-gray-200',
@@ -274,33 +274,33 @@ watch(
                             ]"
                             @click="selectDate(day.key)"
                         >
-                            <div class="mb-2 flex items-center justify-between gap-2">
-                                <span class="text-sm font-semibold" :class="day.isToday ? 'text-blue-700' : 'text-gray-900'">
+                            <div class="mb-1.5 flex items-center justify-between gap-1 sm:mb-2 sm:gap-2">
+                                <span class="text-xs font-semibold sm:text-sm" :class="day.isToday ? 'text-blue-700' : 'text-gray-900'">
                                     {{ formatDayLabel(day.date) }}
                                 </span>
                                 <span
                                     v-if="day.items.length"
-                                    class="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-gray-900 px-2 text-xs font-semibold text-white"
+                                    class="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-gray-900 px-1.5 text-[10px] font-semibold text-white sm:h-6 sm:min-w-6 sm:px-2 sm:text-xs"
                                 >
                                     {{ day.items.length }}
                                 </span>
                             </div>
 
-                            <div class="space-y-2 overflow-hidden">
+                            <div class="space-y-1.5 overflow-hidden sm:space-y-2">
                                 <article
                                     v-for="deliverable in day.items.slice(0, 3)"
                                     :key="deliverable.id"
-                                    class="rounded-xl border border-gray-200 bg-gray-50 p-2"
+                                    class="rounded-xl border border-gray-200 bg-gray-50 p-1.5 sm:p-2"
                                 >
-                                    <p class="truncate text-xs font-semibold text-gray-900">
+                                    <p class="truncate text-[10px] font-semibold text-gray-900 sm:text-xs">
                                         {{ collaborationById.get(deliverable.collaboration_id)?.brand_name ?? 'Marque inconnue' }}
                                     </p>
-                                    <p class="truncate text-xs text-gray-500">
+                                    <p class="truncate text-[10px] text-gray-500 sm:text-xs">
                                         {{ collaborationById.get(deliverable.collaboration_id)?.title ?? 'Collaboration' }}
                                     </p>
                                 </article>
 
-                                <p v-if="day.items.length > 3" class="text-xs text-gray-500">
+                                <p v-if="day.items.length > 3" class="text-[10px] text-gray-500 sm:text-xs">
                                     + {{ day.items.length - 3 }} autre(s)
                                 </p>
                             </div>
