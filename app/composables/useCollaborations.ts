@@ -10,7 +10,31 @@ export function useCollaborations() {
   const error = ref<string | null>(null)
   const saving = ref(false)
 
-  async function fetchCollaborations() {
+  async function enrichCollaborationsWithBrands(rows: CollaborationWithStatus[]) {
+    const brandIds = [...new Set(rows.map((collaboration) => collaboration.brand_id).filter(Boolean))]
+
+    if (brandIds.length === 0) {
+      return rows
+    }
+
+    const { data: brands, error: brandsError } = await supabase
+      .from('brands')
+      .select('id, name')
+      .in('id', brandIds as string[])
+
+    if (brandsError) {
+      throw new Error(brandsError.message)
+    }
+
+    const brandNameById = new Map((brands ?? []).map((brand) => [brand.id, brand.name]))
+
+    return rows.map((collaboration) => ({
+      ...collaboration,
+      brand_name: collaboration.brand_id ? brandNameById.get(collaboration.brand_id) ?? null : null,
+    }))
+  }
+
+  async function fetchCollaborations(): Promise<{ data: CollaborationWithStatus[]; error: string | null }> {
     loading.value = true
     error.value = null
 
@@ -23,33 +47,48 @@ export function useCollaborations() {
 
     if (fetchError) {
       error.value = fetchError.message
-      return
+      loading.value = false
+      return { data: [], error: fetchError.message }
     }
 
-    const rows = (data ?? []) as CollaborationWithStatus[]
-    const brandIds = [...new Set(rows.map((collaboration) => collaboration.brand_id).filter(Boolean))]
-
-    if (brandIds.length === 0) {
+    try {
+      const rows = await enrichCollaborationsWithBrands((data ?? []) as CollaborationWithStatus[])
       collaborations.value = rows
-      return
+      loading.value = false
+      return { data: rows, error: null }
+    } catch (enrichError) {
+      error.value = enrichError instanceof Error ? enrichError.message : 'Impossible de charger les marques.'
+      loading.value = false
+      return { data: [], error: error.value }
+    }
+  }
+
+  async function fetchCollaborationById(
+    collaborationId: string
+  ): Promise<{ data: CollaborationWithStatus | null; error: string | null }> {
+    const { data, error: fetchError } = await supabase
+      .from('collaborations_with_status')
+      .select('*')
+      .eq('id', collaborationId)
+      .maybeSingle()
+
+    if (fetchError) {
+      return { data: null, error: fetchError.message }
     }
 
-    const { data: brands, error: brandsError } = await supabase
-      .from('brands')
-      .select('id, name')
-      .in('id', brandIds as string[])
-
-    if (brandsError) {
-      error.value = brandsError.message
-      return
+    if (!data) {
+      return { data: null, error: null }
     }
 
-    const brandNameById = new Map((brands ?? []).map((brand) => [brand.id, brand.name]))
-
-    collaborations.value = rows.map((collaboration) => ({
-      ...collaboration,
-      brand_name: collaboration.brand_id ? brandNameById.get(collaboration.brand_id) ?? null : null,
-    }))
+    try {
+      const rows = await enrichCollaborationsWithBrands([data as CollaborationWithStatus])
+      return { data: rows[0] ?? null, error: null }
+    } catch (enrichError) {
+      return {
+        data: null,
+        error: enrichError instanceof Error ? enrichError.message : 'Impossible de charger la collaboration.',
+      }
+    }
   }
 
   async function createCollaboration(
@@ -111,6 +150,7 @@ export function useCollaborations() {
     error,
     saving,
     fetchCollaborations,
+    fetchCollaborationById,
     createCollaboration,
   }
 }

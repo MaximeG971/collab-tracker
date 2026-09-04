@@ -1,5 +1,5 @@
 export default defineNuxtRouteMiddleware((to) => {
-  const user = useSupabaseUser();
+  const user = useSupabaseUser() ?? ref(null);
 
   const publicPages = ["/login", "/register"];
   const isPublicPage = publicPages.includes(to.path);
