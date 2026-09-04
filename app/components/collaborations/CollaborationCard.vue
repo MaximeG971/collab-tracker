@@ -30,7 +30,7 @@ function formatDisplayDate(value: string) {
     :draggable="props.draggable"
     @dragstart="emit('dragstart', $event)"
     @dragend="emit('dragend')"
-    class="block rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-blue-300 hover:shadow-md"
+    class="block rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-blue-300 hover:shadow-md sm:p-5"
     :class="props.isDragging ? 'opacity-40 ring-2 ring-blue-200' : ''"
   >
     <div class="flex items-start justify-between gap-3">

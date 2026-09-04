@@ -76,14 +76,14 @@ onMounted(() => {
 <template>
   <div class="flex min-h-screen flex-col bg-gray-50">
     <header class="border-b border-gray-200 bg-white">
-      <div class="flex w-full items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+      <div class="flex w-full flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
         <div>
           <p class="text-sm font-medium uppercase tracking-[0.2em] text-blue-600">Vue Kanban</p>
-          <h1 class="text-xl font-bold text-gray-900">Mes collaborations</h1>
+          <h1 class="text-xl font-bold text-gray-900 sm:text-2xl">Mes collaborations</h1>
         </div>
         <NuxtLink
           to="/collaborations/new"
-          class="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700"
+          class="inline-flex self-start rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 sm:self-auto"
         >
           + Nouvelle
         </NuxtLink>
@@ -93,7 +93,7 @@ onMounted(() => {
     <LayoutAppNav />
 
     <main class="flex flex-1 min-h-0 w-full flex-col px-4 py-6 sm:px-6 lg:px-8">
-      <div class="mb-5 flex items-end justify-between gap-4">
+      <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
         <div>
           <p class="text-sm text-gray-500">
             Visualise l’avancement de tes collaborations par statut.
@@ -112,8 +112,8 @@ onMounted(() => {
         Impossible de charger les collaborations : {{ error }}
       </div>
 
-      <div v-else class="flex-1 min-h-0 overflow-x-auto overflow-y-hidden pb-4">
-        <div class="flex min-h-full min-w-max items-stretch gap-4">
+      <div v-else class="flex-1 min-h-0 pb-4 lg:overflow-x-auto lg:overflow-y-hidden">
+        <div class="flex min-h-full flex-col gap-4 lg:min-w-max lg:flex-row lg:items-stretch">
           <CollaborationsKanbanColumn
             v-for="column in columns"
             :key="column.status"

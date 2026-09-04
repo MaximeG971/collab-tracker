@@ -24,7 +24,7 @@ const emit = defineEmits<{
 
 <template>
   <section
-    class="flex h-full w-72 shrink-0 flex-col overflow-hidden rounded-3xl border bg-white shadow-sm transition"
+    class="flex h-full w-full flex-col overflow-hidden rounded-3xl border bg-white shadow-sm transition lg:w-72 lg:shrink-0"
     :class="highlighted ? 'border-blue-400 ring-2 ring-blue-200' : 'border-gray-200'"
     @dragover.prevent="emit('dragover', status)"
     @drop.prevent="emit('drop', status)"
