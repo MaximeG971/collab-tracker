@@ -41,7 +41,7 @@ async function handleSubmit() {
 <template>
   <div class="min-h-screen bg-gray-50">
     <header class="border-b border-gray-200 bg-white">
-      <div class="mx-auto flex max-w-lg items-center gap-3 px-4 py-4">
+      <div class="mx-auto flex max-w-2xl items-center gap-3 px-4 py-4 sm:px-6 lg:px-8">
         <NuxtLink
           to="/collaborations"
           class="text-sm text-gray-500 hover:text-gray-700"
@@ -52,7 +52,7 @@ async function handleSubmit() {
       </div>
     </header>
 
-    <main class="mx-auto max-w-lg px-4 py-6">
+    <main class="mx-auto max-w-2xl px-4 py-6 sm:px-6 lg:px-8">
       <form class="space-y-4" @submit.prevent="handleSubmit">
         <div>
           <label class="block text-sm font-medium text-gray-700">Marque</label>

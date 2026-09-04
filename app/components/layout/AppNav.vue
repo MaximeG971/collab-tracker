@@ -14,16 +14,16 @@ function isActive(path: string) {
 
 <template>
   <nav class="border-b border-gray-200 bg-white">
-    <div class="mx-auto flex max-w-lg items-center gap-1 px-4 py-3">
+    <div class="mx-auto flex max-w-5xl items-center gap-2 overflow-x-auto px-4 py-3 sm:justify-center">
       <NuxtLink
         v-for="link in links"
         :key="link.to"
         :to="link.to"
-        class="rounded-lg px-3 py-1.5 text-sm font-medium transition"
+        class="shrink-0 rounded-full px-4 py-2 text-sm font-medium transition"
         :class="
           isActive(link.to)
-            ? 'bg-blue-600 text-white'
-            : 'text-gray-600 hover:bg-gray-100'
+            ? 'bg-blue-600 text-white shadow-sm'
+            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
         "
       >
         {{ link.label }}

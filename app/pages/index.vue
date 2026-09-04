@@ -20,14 +20,14 @@ onMounted(() => {
 <template>
   <div class="min-h-screen bg-gray-50">
     <header class="border-b border-gray-200 bg-white">
-      <div class="mx-auto flex max-w-lg items-center justify-between px-4 py-4">
-        <div>
-          <h1 class="text-xl font-bold text-gray-900">Collab Tracker</h1>
-          <p class="text-sm text-gray-500">Tes collaborations en un coup d'œil</p>
+      <div class="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <div class="min-w-0">
+          <h1 class="text-xl font-bold text-gray-900 sm:text-2xl">Collab Tracker</h1>
+          <p class="text-sm text-gray-500 sm:text-base">Tes collaborations en un coup d'œil</p>
         </div>
         <button
           type="button"
-          class="text-sm text-gray-500 hover:text-gray-700"
+          class="self-start rounded-full bg-gray-100 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200 hover:text-gray-800 sm:self-auto"
           @click="handleLogout"
         >
           Déconnexion
@@ -37,7 +37,7 @@ onMounted(() => {
 
     <LayoutAppNav />
 
-    <main class="mx-auto max-w-lg px-4 py-6">
+    <main class="mx-auto max-w-5xl px-4 py-6 sm:px-6 lg:px-8">
       <div v-if="loading" class="py-12 text-center text-sm text-gray-500">
         Chargement...
       </div>
@@ -50,7 +50,7 @@ onMounted(() => {
       </div>
 
       <template v-else>
-        <div class="mb-6 grid grid-cols-2 gap-3">
+        <div class="mb-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <div class="rounded-xl border border-gray-200 bg-white p-4">
             <p class="text-2xl font-bold text-gray-900">{{ collaborations.length }}</p>
             <p class="text-sm text-gray-500">Collaborations</p>
@@ -63,7 +63,7 @@ onMounted(() => {
           </div>
         </div>
 
-        <div class="mb-4 flex items-center justify-between">
+        <div class="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h2 class="text-lg font-semibold text-gray-900">Dernières collaborations</h2>
           <NuxtLink
             to="/collaborations"

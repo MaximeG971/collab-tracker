@@ -71,21 +71,21 @@ onMounted(() => {
 <template>
   <div class="min-h-screen bg-gray-50">
     <header class="border-b border-gray-200 bg-white">
-      <div class="mx-auto flex max-w-3xl items-center gap-3 px-4 py-4">
+      <div class="mx-auto flex max-w-4xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:gap-4 sm:px-6 lg:px-8">
         <NuxtLink to="/collaborations" class="text-sm text-gray-500 hover:text-gray-700">
           ← Retour
         </NuxtLink>
 
         <div v-if="collaboration" class="min-w-0">
           <p class="text-sm text-gray-500">{{ collaboration.brand_name ?? 'Marque inconnue' }}</p>
-          <h1 class="truncate text-xl font-bold text-gray-900">{{ collaboration.title }}</h1>
+          <h1 class="truncate text-xl font-bold text-gray-900 sm:text-2xl">{{ collaboration.title }}</h1>
         </div>
 
         <h1 v-else class="text-xl font-bold text-gray-900">Détail collaboration</h1>
       </div>
     </header>
 
-    <main class="mx-auto max-w-3xl px-4 py-6">
+    <main class="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
       <div v-if="loading" class="py-12 text-center text-sm text-gray-500">
         Chargement...
       </div>
@@ -113,7 +113,7 @@ onMounted(() => {
             />
           </div>
 
-          <div class="mt-6 grid gap-4 sm:grid-cols-3">
+          <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <div class="rounded-xl bg-gray-50 p-4">
               <p class="text-xs font-medium uppercase tracking-wide text-gray-500">Statut</p>
               <p class="mt-1 text-sm font-semibold text-gray-900">
@@ -137,7 +137,7 @@ onMounted(() => {
         </section>
 
         <section class="mt-6">
-          <div class="mb-3 flex items-center justify-between gap-3">
+          <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
             <h2 class="text-lg font-semibold text-gray-900">Livrables</h2>
             <p class="text-sm text-gray-500">{{ deliverables.length }} élément(s)</p>
           </div>
