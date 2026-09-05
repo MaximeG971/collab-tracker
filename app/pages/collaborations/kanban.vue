@@ -75,32 +75,22 @@ onMounted(() => {
 
 <template>
   <div class="flex min-h-screen flex-col bg-gray-50">
-    <header class="border-b border-gray-200 bg-white">
-      <div class="flex w-full flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-        <div>
-          <p class="text-sm font-medium uppercase tracking-[0.2em] text-blue-600">Vue Kanban</p>
-          <h1 class="text-xl font-bold text-gray-900 sm:text-2xl">Mes collaborations</h1>
-        </div>
+    <LayoutAppHeader title="Mes collaborations">
+      Vue Kanban — visualise l'avancement de tes collaborations par statut.
+
+      <template #actions>
         <NuxtLink
           to="/collaborations/new"
-          class="inline-flex self-start rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 sm:self-auto"
+          class="inline-flex rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
         >
           + Nouvelle
         </NuxtLink>
-      </div>
-    </header>
+      </template>
+    </LayoutAppHeader>
 
     <LayoutAppNav />
 
     <main class="flex flex-1 min-h-0 w-full flex-col px-4 py-6 sm:px-6 lg:px-8">
-      <div class="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
-        <div>
-          <p class="text-sm text-gray-500">
-            Visualise l’avancement de tes collaborations par statut.
-          </p>
-        </div>
-      </div>
-
       <div v-if="loading" class="py-12 text-center text-sm text-gray-500">
         Chargement...
       </div>

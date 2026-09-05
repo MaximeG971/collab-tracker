@@ -11,7 +11,7 @@ export const COLLABORATION_STATUSES = [
 export type CollaborationStatus = (typeof COLLABORATION_STATUSES)[number]
 
 export const DELIVERABLE_TYPES = ['reel', 'story', 'post', 'video', 'other'] as const
-export const PLATFORMS = ['instagram', 'tiktok', 'youtube', 'other'] as const
+export const PLATFORMS = ['instagram', 'tiktok', 'youtube', 'ugc', 'other'] as const
 
 export type DeliverableType = (typeof DELIVERABLE_TYPES)[number]
 export type Platform = (typeof PLATFORMS)[number]
@@ -28,6 +28,7 @@ export const PLATFORM_LABELS: Record<Platform, string> = {
   instagram: 'Instagram',
   tiktok: 'TikTok',
   youtube: 'YouTube',
+  ugc: 'UGC',
   other: 'Autre',
 }
 
@@ -41,9 +42,22 @@ export type Brand = {
 export type CreateCollaborationInput = {
   brandName: string
   title: string
-  deliverableType: DeliverableType
-  deliverablePlatform: Platform
+  deadlineDate?: string | null
   notes?: string
+}
+
+export type UpdateCollaborationInput = {
+  id: string
+  title: string
+  notes?: string
+  deadlineDate?: string | null
+}
+
+export type CreateDeliverableInput = {
+  collaborationId: string
+  type: DeliverableType
+  platform: Platform
+  deadlineDate?: string | null
 }
 
 export type CollaborationWithStatus = {
@@ -52,6 +66,7 @@ export type CollaborationWithStatus = {
   brand_id: string | null
   title: string
   notes: string | null
+  deadline_date: string | null
   created_at: string
   updated_at: string
   computed_status: CollaborationStatus | null

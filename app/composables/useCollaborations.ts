@@ -1,9 +1,12 @@
-import type { CollaborationWithStatus, CreateCollaborationInput } from '~/types'
+import type {
+  CollaborationWithStatus,
+  CreateCollaborationInput,
+  UpdateCollaborationInput,
+} from '~/types'
 
 export function useCollaborations() {
   const supabase = useSupabaseClient()
   const { findOrCreateBrand } = useBrands()
-  const { createDeliverable } = useDeliverables()
 
   const collaborations = ref<CollaborationWithStatus[]>([])
   const loading = ref(false)
@@ -42,8 +45,6 @@ export function useCollaborations() {
       .from('collaborations_with_status')
       .select('*')
       .order('created_at', { ascending: false })
-
-    loading.value = false
 
     if (fetchError) {
       error.value = fetchError.message
@@ -116,32 +117,58 @@ export function useCollaborations() {
         brand_id: brand.id,
         title: input.title.trim(),
         notes: input.notes?.trim() || null,
+        deadline_date: input.deadlineDate || null,
         user_id: userId,
       })
       .select('id')
       .single()
 
+    saving.value = false
+
     if (collaborationError || !collaboration) {
-      saving.value = false
       return {
         collaborationId: null,
         error: collaborationError?.message ?? 'Création impossible.',
       }
     }
 
-    const { error: deliverableError } = await createDeliverable({
-      collaborationId: collaboration.id,
-      type: input.deliverableType,
-      platform: input.deliverablePlatform,
-    })
+    return { collaborationId: collaboration.id, error: null }
+  }
+
+  async function updateCollaboration(
+    input: UpdateCollaborationInput
+  ): Promise<{ error: string | null }> {
+    saving.value = true
+
+    const { error: updateError } = await supabase
+      .from('collaborations')
+      .update({
+        title: input.title.trim(),
+        notes: input.notes?.trim() || null,
+        deadline_date: input.deadlineDate || null,
+      })
+      .eq('id', input.id)
 
     saving.value = false
 
-    if (deliverableError) {
-      return { collaborationId: null, error: deliverableError }
+    if (updateError) {
+      return { error: updateError.message }
     }
 
-    return { collaborationId: collaboration.id, error: null }
+    return { error: null }
+  }
+
+  async function deleteCollaboration(id: string): Promise<{ error: string | null }> {
+    const { error: deleteError } = await supabase
+      .from('collaborations')
+      .delete()
+      .eq('id', id)
+
+    if (deleteError) {
+      return { error: deleteError.message }
+    }
+
+    return { error: null }
   }
 
   return {
@@ -152,5 +179,7 @@ export function useCollaborations() {
     fetchCollaborations,
     fetchCollaborationById,
     createCollaboration,
+    updateCollaboration,
+    deleteCollaboration,
   }
 }
