@@ -1,4 +1,4 @@
-import type { Deliverable, DeliverableType, Platform } from '~/types'
+import type { CreateDeliverableInput, Deliverable } from '~/types'
 import type { CollaborationStatus } from '~/types'
 
 export function useDeliverables() {
@@ -33,29 +33,32 @@ export function useDeliverables() {
     return { data: (data ?? []) as Deliverable[], error: null }
   }
 
-  async function createDeliverable(input: {
-    collaborationId: string
-    type: DeliverableType
-    platform: Platform
-  }): Promise<{ error: string | null }> {
+  async function createDeliverable(
+    input: CreateDeliverableInput
+  ): Promise<{ data: Deliverable | null; error: string | null }> {
     const { data: authData, error: authError } = await supabase.auth.getUser()
 
     if (authError || !authData.user) {
-      return { error: 'Utilisateur non connecté.' }
+      return { data: null, error: 'Utilisateur non connecté.' }
     }
 
-    const { error: createError } = await supabase.from('deliverables').insert({
-      collaboration_id: input.collaborationId,
-      type: input.type,
-      platform: input.platform,
-      status: 'to_contact',
-    })
+    const { data, error: createError } = await supabase
+      .from('deliverables')
+      .insert({
+        collaboration_id: input.collaborationId,
+        type: input.type,
+        platform: input.platform,
+        deadline_date: input.deadlineDate || null,
+        status: 'to_contact',
+      })
+      .select('*')
+      .single()
 
     if (createError) {
-      return { error: createError.message }
+      return { data: null, error: createError.message }
     }
 
-    return { error: null }
+    return { data: data as Deliverable, error: null }
   }
 
   async function updateDeliverablesStatusByCollaborationId(input: {
@@ -75,6 +78,22 @@ export function useDeliverables() {
     return { updatedCount: data?.length ?? 0, error: null }
   }
 
+  async function updateDeliverableStatusById(input: {
+    deliverableId: string
+    status: CollaborationStatus
+  }): Promise<{ error: string | null }> {
+    const { error } = await supabase
+      .from('deliverables')
+      .update({ status: input.status })
+      .eq('id', input.deliverableId)
+
+    if (error) {
+      return { error: error.message }
+    }
+
+    return { error: null }
+  }
+
   async function updateDeliverableDeadlineById(input: {
     deliverableId: string
     deadlineDate: string | null
@@ -91,11 +110,26 @@ export function useDeliverables() {
     return { error: null }
   }
 
+  async function deleteDeliverableById(deliverableId: string): Promise<{ error: string | null }> {
+    const { error } = await supabase
+      .from('deliverables')
+      .delete()
+      .eq('id', deliverableId)
+
+    if (error) {
+      return { error: error.message }
+    }
+
+    return { error: null }
+  }
+
   return {
     fetchDeliverables,
     fetchDeliverablesByCollaborationId,
     createDeliverable,
     updateDeliverablesStatusByCollaborationId,
+    updateDeliverableStatusById,
     updateDeliverableDeadlineById,
+    deleteDeliverableById,
   }
 }

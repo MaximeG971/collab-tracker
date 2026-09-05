@@ -1,13 +1,12 @@
 <script setup lang="ts">
-import type { DeliverableType, Platform } from '~/types'
+import type { CreateCollaborationInput } from '~/types'
 
 const { brands, fetchBrands } = useBrands()
 const { createCollaboration, saving } = useCollaborations()
 
 const brandName = ref('')
 const title = ref('')
-const deliverableType = ref<DeliverableType>('reel')
-const deliverablePlatform = ref<Platform>('instagram')
+const deadlineDate = ref('')
 const notes = ref('')
 const errorMessage = ref('')
 
@@ -21,36 +20,27 @@ onMounted(() => {
 async function handleSubmit() {
   errorMessage.value = ''
 
-  const { collaborationId, error } = await createCollaboration({
+  const input: CreateCollaborationInput = {
     brandName: brandName.value,
     title: title.value,
-    deliverableType: deliverableType.value,
-    deliverablePlatform: deliverablePlatform.value,
+    deadlineDate: deadlineDate.value || null,
     notes: notes.value,
-  })
+  }
+
+  const { collaborationId, error } = await createCollaboration(input)
 
   if (error || !collaborationId) {
     errorMessage.value = error ?? 'Création impossible.'
     return
   }
 
-  await navigateTo('/collaborations')
+  await navigateTo(`/collaborations/${collaborationId}`)
 }
 </script>
 
 <template>
   <div class="min-h-screen bg-gray-50">
-    <header class="border-b border-gray-200 bg-white">
-      <div class="mx-auto flex max-w-2xl items-center gap-3 px-4 py-4 sm:px-6 lg:px-8">
-        <NuxtLink
-          to="/collaborations"
-          class="text-sm text-gray-500 hover:text-gray-700"
-        >
-          ← Retour
-        </NuxtLink>
-        <h1 class="text-xl font-bold text-gray-900">Nouvelle collaboration</h1>
-      </div>
-    </header>
+    <LayoutAppHeader title="Nouvelle collaboration" back-to="/collaborations" max-width="2xl" />
 
     <main class="mx-auto max-w-2xl px-4 py-6 sm:px-6 lg:px-8">
       <form class="space-y-4" @submit.prevent="handleSubmit">
@@ -80,32 +70,10 @@ async function handleSubmit() {
           />
         </div>
 
-        <div class="grid gap-4 sm:grid-cols-2">
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Type du premier livrable</label>
-            <select v-model="deliverableType" :class="inputClass">
-              <option value="reel">Reel</option>
-              <option value="story">Story</option>
-              <option value="post">Post</option>
-              <option value="video">Vidéo</option>
-              <option value="other">Autre</option>
-            </select>
-          </div>
-
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Plateforme</label>
-            <select v-model="deliverablePlatform" :class="inputClass">
-              <option value="instagram">Instagram</option>
-              <option value="tiktok">TikTok</option>
-              <option value="youtube">YouTube</option>
-              <option value="other">Autre</option>
-            </select>
-          </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700">Échéance (optionnelle)</label>
+          <input v-model="deadlineDate" type="date" :class="inputClass" />
         </div>
-
-        <p class="text-xs text-gray-500">
-          Le statut initial du livrable sera « À contacter ».
-        </p>
 
         <div>
           <label class="block text-sm font-medium text-gray-700">Notes</label>
@@ -116,6 +84,10 @@ async function handleSubmit() {
             :class="inputClass"
           />
         </div>
+
+        <p class="text-xs text-gray-500">
+          Tu pourras ajouter les livrables (Reel, Story, Post...) une fois la collaboration créée.
+        </p>
 
         <p v-if="errorMessage" class="text-sm text-red-600">
           {{ errorMessage }}
