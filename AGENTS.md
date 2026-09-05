@@ -26,21 +26,28 @@ Ne pas complexifier prématurément (pas de finances/stats/IA en V1 — voir roa
 
 ## Modèle de données (Supabase)
 
-Tables : `brands`, `collaborations`, `deliverables`, `tasks`, `files` — toutes protégées par Row Level Security (RLS), isolation stricte par `user_id`.
+Tables : `brands`, `collaborations`, `deliverables`, `tasks`, `files` — toutes protégées par Row Level Security (RLS).
+
+⚠️ **`deliverables` n'a pas de colonne `user_id`** (contrairement à `brands`/`collaborations`/`tasks`) : son isolation RLS passe par la collaboration parente (`EXISTS (... WHERE c.id = deliverables.collaboration_id AND c.user_id = auth.uid())`), sur le même principe que `files`. Ne pas supposer un `user_id` direct sur `deliverables` dans le code.
 
 Point clé : **le statut vit au niveau `deliverable`, pas `collaboration`**. Une collaboration peut avoir plusieurs livrables (ex: Reel + TikTok + 3 Stories), chacun avec son propre statut et sa propre deadline.
 
-Le statut affiché d'une collaboration est **calculé, jamais stocké** : c'est le statut le moins avancé parmi ses livrables (vue SQL `collaborations_with_status`, colonnes `computed_status` et `is_late`). Toujours interroger cette vue côté front pour le Kanban/Liste, pas la table `collaborations` brute.
+Le statut affiché d'une collaboration est **calculé, jamais stocké** : c'est le statut le moins avancé parmi ses livrables (vue SQL `collaborations_with_status`, colonnes `computed_status`, `is_late`, et `brand_name` — jointure déjà faite dans la vue). Toujours interroger cette vue côté front pour le Kanban/Liste, pas la table `collaborations` brute.
 
 Enum de statut (ordre d'avancement) :
 `to_contact → validated → product_received → to_create → to_validate → scheduled → published`
 
 `is_late` = un livrable a une `deadline_date` dépassée et n'est pas encore `published`. Calculé à la volée, jamais stocké.
 
+La vue utilise `security_invoker = true` : elle applique donc la RLS des tables sous-jacentes plutôt que ses propres droits. Conséquence : toute nouvelle table/colonne lue par cette vue doit recevoir un `GRANT SELECT ... TO authenticated` en plus de sa policy RLS, sinon PostgREST renvoie une erreur "permission denied" même si la policy est correcte.
+
+**Source de vérité du schéma** : `supabase/migrations/*.sql`, appliquées dans l'ordre chronologique du nom de fichier. Ne jamais modifier le schéma en écrivant du SQL "à la main" dans le dashboard sans créer la migration correspondante dans ce dossier — sinon la BDD et le dépôt divergent.
+
 ## Conventions de code
 
 - TypeScript strict partout
 - Composants bien séparés, pas de logique métier dans les composants — passer par des composables (`useCollaborations`, `useDeliverables`, etc.)
+- Navigation générale dans `app/components/layout/` (ex: `AppNav.vue`) — distinct des composants métier rangés par domaine (`collaborations/`, `tasks/`)
 - Jamais de clé Supabase `service_role` côté client — uniquement l'`anon` key (protégée par la RLS)
 - Chemins de fichiers Storage : toujours préfixés par `{user_id}/{collaboration_id}/{file_name}` (requis par les policies RLS du bucket)
 - Pas de code mort, pas de clé/valeur en dur — tout ce qui peut varier (URLs, clés) passe par `.env` / `runtimeConfig`

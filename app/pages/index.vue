@@ -1,16 +1,9 @@
 <script setup lang="ts">
-const supabase = useSupabaseClient()
-
 const { collaborations, loading, error, fetchCollaborations } = useCollaborations()
 
 const lateCount = computed(
   () => collaborations.value.filter((c) => c.is_late).length
 )
-
-async function handleLogout() {
-  await supabase.auth.signOut()
-  await navigateTo('/login')
-}
 
 onMounted(() => {
   fetchCollaborations()
@@ -19,21 +12,9 @@ onMounted(() => {
 
 <template>
   <div class="min-h-screen bg-gray-50">
-    <header class="border-b border-gray-200 bg-white">
-      <div class="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-        <div class="min-w-0">
-          <h1 class="text-xl font-bold text-gray-900 sm:text-2xl">Collab Tracker</h1>
-          <p class="text-sm text-gray-500 sm:text-base">Tes collaborations en un coup d'œil</p>
-        </div>
-        <button
-          type="button"
-          class="self-start rounded-full bg-gray-100 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200 hover:text-gray-800 sm:self-auto"
-          @click="handleLogout"
-        >
-          Déconnexion
-        </button>
-      </div>
-    </header>
+    <LayoutAppHeader title="Tableau de bord">
+      Tes collaborations en un coup d'œil
+    </LayoutAppHeader>
 
     <LayoutAppNav />
 

@@ -8,17 +8,16 @@ onMounted(() => {
 
 <template>
   <div class="min-h-screen bg-gray-50">
-    <header class="border-b border-gray-200 bg-white">
-      <div class="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
-        <h1 class="text-xl font-bold text-gray-900 sm:text-2xl">Mes collaborations</h1>
+    <LayoutAppHeader title="Mes collaborations">
+      <template #actions>
         <NuxtLink
           to="/collaborations/new"
-          class="inline-flex self-start rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 sm:self-auto"
+          class="inline-flex rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
         >
           + Nouvelle
         </NuxtLink>
-      </div>
-    </header>
+      </template>
+    </LayoutAppHeader>
 
     <LayoutAppNav />
 
