@@ -35,6 +35,12 @@ async function handleSubmit() {
     return
   }
 
+  // @nuxtjs/supabase ne rafraîchit pas automatiquement l'état réactif
+  // useSupabaseUser() sur un simple updateUser() (événement USER_UPDATED) —
+  // on force donc un refresh de session pour que le header affiche le
+  // nouveau username immédiatement, sans devoir se reconnecter.
+  await supabase.auth.refreshSession()
+
   message.value = 'Nom d\'utilisateur enregistré.'
 }
 </script>
@@ -53,21 +59,33 @@ async function handleSubmit() {
         <form class="mt-4 space-y-4" @submit.prevent="handleSubmit">
           <div>
             <label class="block text-sm font-medium text-gray-700">Nom d'utilisateur</label>
-            <input v-model="username" type="text" placeholder="Ex. Cassy" :class="inputClass" />
+            <input
+              v-model="username"
+              type="text"
+              placeholder="Ex. Cassy"
+              :class="inputClass"
+            />
           </div>
 
           <div>
             <label class="block text-sm font-medium text-gray-700">Email</label>
-            <input :value="user?.email" type="email" disabled
-              class="mt-1 w-full cursor-not-allowed rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-gray-500" />
+            <input
+              :value="user?.email"
+              type="email"
+              disabled
+              class="mt-1 w-full cursor-not-allowed rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-gray-500"
+            />
             <p class="mt-1 text-xs text-gray-400">L'email n'est pas modifiable depuis cette page.</p>
           </div>
 
           <p v-if="message" class="text-sm text-green-600">{{ message }}</p>
           <p v-if="errorMessage" class="text-sm text-red-600">{{ errorMessage }}</p>
 
-          <button type="submit" :disabled="saving"
-            class="w-full rounded-lg bg-blue-600 py-2.5 font-medium text-white hover:bg-blue-700 disabled:opacity-50">
+          <button
+            type="submit"
+            :disabled="saving"
+            class="w-full rounded-lg bg-blue-600 py-2.5 font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+          >
             {{ saving ? 'Enregistrement...' : 'Enregistrer' }}
           </button>
         </form>
