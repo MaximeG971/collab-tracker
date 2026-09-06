@@ -12,7 +12,8 @@ const user = useSupabaseUser()
 
 const displayName = computed(() => {
   const meta = user.value?.user_metadata as Record<string, unknown> | undefined
-  const name = (meta?.full_name as string | undefined)
+  const name = (meta?.username as string | undefined)
+    || (meta?.full_name as string | undefined)
     || (meta?.name as string | undefined)
     || (meta?.pseudo as string | undefined)
 
@@ -57,9 +58,13 @@ async function handleLogout() {
 
       <div class="flex flex-wrap items-center gap-2 self-start sm:self-auto">
         <slot name="actions" />
-        <span v-if="displayName" class="hidden text-sm font-medium text-gray-700 sm:inline">
+        <NuxtLink
+          v-if="displayName"
+          to="/settings"
+          class="hidden text-sm font-medium text-gray-700 hover:text-blue-600 sm:inline"
+        >
           {{ displayName }}
-        </span>
+        </NuxtLink>
         <button
           type="button"
           class="rounded-full bg-gray-100 px-3 py-2 text-sm font-medium text-gray-600 hover:bg-gray-200 hover:text-gray-800"
